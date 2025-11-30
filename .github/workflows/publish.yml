@@ -28,16 +28,18 @@ jobs:
 
       - name: Push package
         run: dotnet nuget push ./nupkg/*.nupkg \
-              --source "github" \
-              --api-key ${{ secrets.GH_TOKEN }} \
-              --skip-duplicate
+          --source github \
+          --api-key ${{ secrets.GH_TOKEN }} \
+          --skip-duplicate
+
         env:
           NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED: true
 
       - name: Add GitHub Packages source
         run: dotnet nuget add source \
-              --name github \
-              --username mxrkxvka \
-              --password ${{ secrets.GH_TOKEN }} \
-              https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json \
-              --store-password-in-clear-text
+          --name github \
+          --username ${{ github.actor }} \
+          --password ${{ secrets.GH_TOKEN }} \
+          https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json \
+          --store-password-in-clear-text
+
