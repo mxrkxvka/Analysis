@@ -1,0 +1,43 @@
+name: CI/CD Todo.Core
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-pack-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore Todo.Core/Todo.Core.csproj
+
+      - name: Build
+        run: dotnet build Todo.Core/Todo.Core.csproj -c Release --no-restore
+
+      - name: Pack
+        run: dotnet pack Todo.Core/Todo.Core.csproj -c Release -o ./nupkg --no-build
+
+      - name: Push package
+        run: dotnet nuget push ./nupkg/*.nupkg \
+              --source "github" \
+              --api-key ${{ secrets.GH_TOKEN }} \
+              --skip-duplicate
+        env:
+          NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED: true
+
+      - name: Add GitHub Packages source
+        run: dotnet nuget add source \
+              --name github \
+              --username mxrkxvka \
+              --password ${{ secrets.GH_TOKEN }} \
+              https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json \
+              --store-password-in-clear-text
