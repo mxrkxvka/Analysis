@@ -1,3 +1,12 @@
+// ----------------------------------------------------
+// <copyright file="TodoListTests.cs" company="NATK">
+// Copyright (c) NATK. All rights reserved.
+// </copyright>
+// ----------------------------------------------------
+
+using Todo.Core;
+using Xunit;
+
 namespace Todo.Core.Tests
 {
     public class TodoListTests
@@ -9,6 +18,7 @@ namespace Todo.Core.Tests
             _ = list.Add("task");
             Assert.Equal(1, list.Count);
         }
+
         [Fact]
         public void RemoveByIdWorks()
         {
